@@ -1,78 +1,53 @@
 <x-layout>
-    <x-slot:heading>
-        Register a User
-    </x-slot:heading>
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <span class="mx-auto text-4xl font-bold text-indigo-500 flex justify-center">EngageLearn</span>
+            <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-white">
+                Create your account
+            </h2>
+        </div>
 
-    <form method="POST" action="/register">
-        @csrf
-        <div class="space-y-12">
-            <div class="border-b border-gray-700 pb-12">
-                <h2 class="text-base/7 font-semibold text-gray-100">Register New User</h2>
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <form class="space-y-6" action="/register" method="POST">
+                @csrf
 
-                <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <x-form-field>
+                    <x-form-label for="name">Name</x-form-label>
+                    <x-form-input type="text" name="name" id="name" autocomplete="name" required />
+                    <x-form-error name="name" />
+                </x-form-field>
 
-                    <!-- Firstname -->
-                    <x-form-field class="sm:col-span-3">
-                        <x-form-label for="name">Name</x-form-label>
-                        <div class="mt-2">
-                            <x-form-input placeholder="Enter your Name"
-                                          required id="name" name="name" />
-                            <x-form-error name="name"/>
-                        </div>
-                    </x-form-field>
+                <x-form-field>
+                    <x-form-label for="email">Email address</x-form-label>
+                    <x-form-input type="email" name="email" id="email" autocomplete="email" required />
+                    <x-form-error name="email" />
+                </x-form-field>
 
-                    <!-- Email -->
-                    <x-form-field class="sm:col-span-6">
-                        <x-form-label for="email">Email</x-form-label>
-                        <div class="mt-2">
-                            <x-form-input placeholder="Enter Your Email"
-                                          type="email" required id="email" name="email" />
-                            <x-form-error name="email"/>
-                        </div>
-                    </x-form-field>
+                <x-form-field>
+                    <x-form-label for="password">Password</x-form-label>
+                    <x-form-input type="password" name="password" id="password" required />
+                    <x-form-error name="password" />
+                </x-form-field>
 
-                    <!-- Password -->
-                    <x-form-field class="sm:col-span-3">
-                        <x-form-label for="password">Password</x-form-label>
-                        <div class="mt-2">
-                            <x-form-input type="password" required id="password"
-                                          name="password"
-                                          placeholder="Enter a secure password"/>
-                            <x-form-error name="password"/>
-                        </div>
-                    </x-form-field>
+                <x-form-field>
+                    <x-form-label for="password_confirmation">Confirm Password</x-form-label>
+                    <x-form-input type="password" name="password_confirmation" id="password_confirmation" required />
+                    <x-form-error name="password_confirmation" />
+                </x-form-field>
+                
+                <input type="hidden" name="role" value="user">
 
-                    <!-- Confirm Password -->
-                    <x-form-field class="sm:col-span-3">
-                        <x-form-label for="password_confirmation">Confirm Password</x-form-label>
-                        <div class="mt-2">
-                            <x-form-input type="password" required id="password_confirmation"
-                                          name="password_confirmation"
-                                          placeholder="Confirm your password"/>
-                            <x-form-error name="password_confirmation"/>
-                        </div>
-                    </x-form-field>
-
-                    <!-- Role -->
-                    <x-form-field class="sm:col-span-6">
-                        <x-form-label for="role">Role</x-form-label>
-                        <div class="mt-2">
-                            <select id="role" name="role"
-                                    class="block w-full rounded-md border-0 bg-gray-800 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 focus:ring-2 focus:ring-indigo-500 sm:text-sm/6">
-                                <option value="user">User</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                            <x-form-error name="role"/>
-                        </div>
-                    </x-form-field>
+                <div>
+                    <x-form-button class="w-full">Create Account</x-form-button>
                 </div>
-            </div>
-        </div>
+            </form>
 
-        <!-- Actions -->
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-            <x-form-button type="submit">Register</x-form-button>
+            <p class="mt-10 text-center text-sm text-gray-400">
+                Already a member?
+                <a href="/login" class="font-semibold leading-6 text-indigo-400 hover:text-indigo-300">
+                    Sign in
+                </a>
+            </p>
         </div>
-    </form>
+    </div>
 </x-layout>

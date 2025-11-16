@@ -1,94 +1,81 @@
 <x-layout>
-    <x-slot:heading>
-        Quiz for {{ $quiz->title }}
-    </x-slot:heading>
+    <header class="relative bg-gray-800 after:pointer-events-none after:absolute after:inset-x-0 after:inset-y-0 after:border-y after:border-white/10">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">{{ $quiz->title }}</h1>
+        </div>
+    </header>
+    <main>
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div class="bg-gray-800 shadow-md rounded-lg p-6 lg:p-8 text-gray-300">
+                
+                <!-- This form submits all answers to the server for grading -->
+                <form id="quiz-form" method="POST" action="/quiz/{{ $quiz->id }}/submit">
+                    @csrf
+                    <div class="space-y-8">
+                        @foreach($questions as $index => $question)
+                            <div class="question-block" data-question-id="{{ $question->id }}">
+                                <h3 class="text-xl font-semibold text-white mb-4">
+                                    Question {{ $index + 1 }}: {{ $question->title }}
+                                </h3>
+                                
+                                @switch($question->type)
+                                    @case('multiple_choice')
+                                        <div class="space-y-3">
+                                            <label class="flex items-center p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer">
+                                                <input type="radio" name="answers[{{ $question->id }}]" value="a" class="h-4 w-4 text-indigo-600 border-gray-500 focus:ring-indigo-500">
+                                                <span class="ml-3 text-gray-200">{{ $question->option_a }}</span>
+                                            </label>
+                                            <label class="flex items-center p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer">
+                                                <input type="radio" name="answers[{{ $question->id }}]" value="b" class="h-4 w-4 text-indigo-600 border-gray-500 focus:ring-indigo-500">
+                                                <span class="ml-3 text-gray-200">{{ $question->option_b }}</span>
+                                            </label>
+                                            <label class="flex items-center p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer">
+                                                <input type="radio" name="answers[{{ $question->id }}]" value="c" class="h-4 w-4 text-indigo-600 border-gray-500 focus:ring-indigo-500">
+                                                <span class="ml-3 text-gray-200">{{ $question->option_c }}</span>
+                                            </label>
+                                            <label class="flex items-center p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer">
+                                                <input type="radio" name="answers[{{ $question->id }}]" value="d" class="h-4 w-4 text-indigo-600 border-gray-500 focus:ring-indigo-500">
+                                                <span class="ml-3 text-gray-200">{{ $question->option_d }}</span>
+                                            </label>
+                                        </div>
+                                        @break
 
-    <div class="max-w-2xl mx-auto mt-6 bg-gray-900 p-6 rounded-2xl shadow-lg text-white">
-        <h2 class="text-2xl font-bold mb-4">Test Your Knowledge</h2>
+                                    @case('fill_in_blank')
+                                        <p class="text-sm text-gray-400 mb-2">Type your answer in the box below.</p>
+                                        <input type="text" name="answers[{{ $question->id }}]" class="mt-1 block w-full lg:w-1/2 rounded-md border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        @break
 
-        <!-- Quiz Form -->
-        <form id="quizForm" method="POST" action="/quiz/submit/{{$quiz->id}}/{{Auth::user()->id}}">
-            @csrf
-            @foreach($questions as $index => $question)
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">
-                        {{ $index+1 }}. {{ $question->title }}
-                    </h3>
-                    <div class="space-y-2 mt-2">
-                        <label class="block">
-                            <input type="radio" name="q{{ $question->id }}" value="option_a" class="mr-2">
-                            {{ $question->option_a }}
-                        </label>
-                        <label class="block">
-                            <input type="radio" name="q{{ $question->id }}" value="option_b" class="mr-2">
-                            {{ $question->option_b }}
-                        </label>
-                        <label class="block">
-                            <input type="radio" name="q{{ $question->id }}" value="option_c" class="mr-2">
-                            {{ $question->option_c }}
-                        </label>
-                        <label class="block">
-                            <input type="radio" name="q{{ $question->id }}" value="option_d" class="mr-2">
-                            {{ $question->option_d }}
-                        </label>
+                                    @case('matching')
+                                        @if(is_array($question->options) && isset($question->options['prompts']) && isset($question->options['answers']))
+                                            <p class="text-sm text-gray-400 mb-2">Match the prompts on the left with the correct answers on the right.</p>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="space-y-3">
+                                                    @foreach($question->options['prompts'] as $promptIndex => $prompt)
+                                                        <div class="p-3 rounded-lg bg-gray-700 text-gray-200 h-12 flex items-center">{{ $promptIndex + 1 }}. {{ $prompt }}</div>
+                                                    @endforeach
+                                                </div>
+                                                <div class="space-y-3">
+                                                    <!-- Simple version: User types the answer corresponding to the number -->
+                                                    @foreach($question->options['prompts'] as $promptIndex => $prompt)
+                                                         <input type="text" name="answers[{{ $question->id }}][]" class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Answer for {{ $promptIndex + 1 }}">
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @break
+                                @endswitch
+                            </div>
+                        @endforeach
                     </div>
-                </div>
-            @endforeach
 
-            <!-- Hidden input for score -->
-            <input type="hidden" name="score" id="scoreInput">
+                    <div class="mt-10 border-t border-gray-700 pt-6">
+                        <x-form-button type="submit">Submit Quiz</x-form-button>
+                    </div>
+                </form>
 
-            <button type="submit"
-                    class="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white">
-                Submit Quiz
-            </button>
-        </form>
+            </div>
+        </div>
+    </main>
 
-        <div id="resultBox" class="hidden mt-6 p-4 rounded-xl text-center text-xl font-bold"></div>
-    </div>
 
-    <script>
-        const correctAnswers = {
-            @foreach($questions as $q)
-            "q{{ $q->id }}": "{{ trim($q->correct_answer) }}",
-            @endforeach
-        };
-
-        const quizForm = document.getElementById("quizForm");
-        quizForm.addEventListener("submit", function(e) {
-            e.preventDefault(); // stop immediate submission
-
-            let score = 0;
-            let total = Object.keys(correctAnswers).length;
-
-            for (let qid in correctAnswers) {
-                let selected = document.querySelector(`input[name="${qid}"]:checked`);
-                if (selected && selected.value.trim() === correctAnswers[qid]) {
-                    score++;
-                }
-            }
-
-            // Put score into hidden input
-            document.getElementById("scoreInput").value = score;
-
-            let resultBox = document.getElementById('resultBox');
-            resultBox.classList.remove('hidden');
-            resultBox.textContent = `🎉 You scored ${score} out of ${total}!`;
-
-            // Reset styling
-            resultBox.className = "mt-6 p-4 rounded-xl text-center text-xl font-bold";
-
-            // Apply score color
-            if (score === total) {
-                resultBox.classList.add("bg-green-600");
-            } else if (score >= total/2) {
-                resultBox.classList.add("bg-yellow-600");
-            } else {
-                resultBox.classList.add("bg-red-600");
-            }
-            setTimeout(() => {
-                quizForm.submit();
-            }, 1000);
-        });
-    </script>
 </x-layout>

@@ -1,61 +1,103 @@
 <x-layout>
-    <x-slot:heading>
-        Edit Lesson: {{ $lesson->title }}
-    </x-slot:heading>
+    <div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+        <h1 class="text-2xl font-bold mb-6">Edit Lesson: {{ $lesson->title }}</h1>
 
-    <form method="POST" action="/admin/content/{{ $lesson->id }}" class="bg-gray-900 text-gray-200 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
-        @csrf
-        @method("PATCH")
+        <form method="POST" action="/admin/content/{{ $lesson->id }}">
+            @csrf
+            @method('PATCH')
+            
+            <x-form-field>
+                <x-form-label for="title">Title</x-form-label>
+                <x-form-input type="text" name="title" id="title" value="{{ old('title', $lesson->title) }}" required/>
+                <x-form-error name="title"/>
+            </x-form-field>
 
-        <div class="mb-4">
-            <label class="block mb-1">Title</label>
-            <input type="text" name="title" value="{{ $lesson->title }}"
-                   class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
+            <x-form-field>
+                <x-form-label for="description">Description</x-form-label>
+                <x-form-textarea name="description" id="description" required>{{ old('description', $lesson->description) }}</x-form-textarea>
+                <x-form-error name="description"/>
+            </x-form-field>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <x-form-field>
+                    <x-form-label for="skill_level">Skill Level</x-form-label>
+                    <select name="skill_level" id="skill_level" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="beginner" {{ old('skill_level', $lesson->skill_level) == 'beginner' ? 'selected' : '' }}>Beginner</option>
+                        <option value="intermediate" {{ old('skill_level', $lesson->skill_level) == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
+                        <option value="advanced" {{ old('skill_level', $lesson->skill_level) == 'advanced' ? 'selected' : '' }}>Advanced</option>
+                    </select>
+                    <x-form-error name="skill_level"/>
+                </x-form-field>
+
+                <x-form-field>
+                    <x-form-label for="category">Category</x-form-label>
+                    <x-form-input type="text" name="category" id="category" value="{{ old('category', $lesson->category) }}" placeholder="e.g., Grammar, Vocabulary"/>
+                    <x-form-error name="category"/>
+                </x-form-field>
+            </div>
+
+            <x-form-field>
+                <x-form-label for="image">Image URL</x-form-label>
+                <x-form-input type="text" name="image" id="image" value="{{ old('image', $lesson->image) }}" placeholder="https://..."/>
+                <x-form-error name="image"/>
+            </x-form-field>
+
+            <x-form-field>
+                <x-form-label for="video_url">Video URL</x-form-label>
+                <x-form-input type="text" name="video_url" id="video_url" value="{{ old('video_url', $lesson->video_url) }}" placeholder="https://youtube.com/..."/>
+                <x-form-error name="video_url"/>
+            </x-form-field>
+
+            <x-form-field>
+                <x-form-label for="audio_url">Audio URL</x-form-label>
+                <x-form-input type="text" name="audio_url" id="audio_url" value="{{ old('audio_url', $lesson->audio_url) }}" placeholder="https://.../audio.mp3"/>
+                <x-form-error name="audio_url"/>
+            </x-form-field>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <x-form-field>
+                    <x-form-label for="price">Price</x-form-label>
+                    <x-form-input type="number" name="price" id="price" value="{{ old('price', $lesson->price) }}"/>
+                    <x-form-error name="price"/>
+                </x-form-field>
+
+                <x-form-field>
+                    <x-form-label for="duration">Duration</x-form-label>
+                    <x-form-input type="text" name="duration" id="duration" value="{{ old('duration', $lesson->duration) }}" placeholder="e.g., 2h 30m"/>
+                    <x-form-error name="duration"/>
+                </x-form-field>
+                
+                <x-form-field>
+                    <x-form-label for="enrollments">Enrollments</x-form-label>
+                    <x-form-input type="number" name="enrollments" id="enrollments" value="{{ old('enrollments', $lesson->enrollments) }}"/>
+                    <x-form-error name="enrollments"/>
+                </x-form-field>
+            </div>
+
+            <x-form-field>
+                <x-form-label for="user_id">Teacher</x-form-label>
+                <select name="user_id" id="user_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    @foreach($teachers as $teacher)
+                        <option value="{{ $teacher->id }}" {{ old('user_id', $lesson->user_id) == $teacher->id ? 'selected' : '' }}>
+                            {{ $teacher->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <x-form-error name="user_id"/>
+            </x-form-field>
+
+            <div class="flex justify-end space-x-4 mt-6">
+                <x-button type="button" href="/admin/content" class="mr-4 bg-gray-500 hover:bg-gray-700">Cancel</x-button>
+                <x-form-button>Update Lesson</x-form-button>
+            </div>
+        </form>
+
+        <div class="mt-6 border-t pt-6">
+            <form method="POST" action="/admin/content/{{ $lesson->id }}">
+                @csrf
+                @method('DELETE')
+                <x-form-button class="bg-red-600 hover:bg-red-700" onclick="return confirm('Are you sure you want to delete this lesson?')">Delete Lesson</x-form-button>
+            </form>
         </div>
-
-        <div class="mb-4">
-            <label class="block mb-1">Description</label>
-            <textarea name="description" rows="4"
-                      class="w-full p-2 bg-gray-800 border border-gray-700 rounded">{{ $lesson->description }}</textarea>
-        </div>
-
-        <div class="mb-4">
-            <label class="block mb-1">Image URL</label>
-            <input type="text" name="image" value="{{ $lesson->image }}"
-                   class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
-        </div>
-
-        <div class="mb-4">
-            <label class="block mb-1">Video URL</label>
-            <input type="text" name="video_url" value="{{ $lesson->video_url }}"
-                   class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
-        </div>
-
-        <div class="mb-4">
-            <label class="block mb-1">Price</label>
-            <input type="text" name="price" value="{{ $lesson->price }}"
-                   class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
-        </div>
-
-        <div class="mb-4">
-            <label class="block mb-1">Duration</label>
-            <input type="text" name="duration" value="{{ $lesson->duration }}"
-                   class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
-        </div>
-
-        <div class="mb-4">
-            <label class="block mb-1">Enrollments</label>
-            <input type="text" name="enrollments" value="{{ $lesson->enrollments }}"
-                   class="w-full p-2 bg-gray-800 border border-gray-700 rounded">
-        </div>
-
-        <div class="flex gap-3">
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">
-                Update
-            </button>
-            <a href="/admin/content" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow">
-                Cancel
-            </a>
-        </div>
-    </form>
+    </div>
 </x-layout>

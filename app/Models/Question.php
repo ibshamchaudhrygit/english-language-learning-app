@@ -11,6 +11,9 @@ class Question extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $casts = [
+        'options' => 'array',
+    ];
 
     public function quiz(){
         return $this->belongsTo(Quiz::class);

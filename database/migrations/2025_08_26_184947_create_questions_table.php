@@ -13,13 +13,27 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Quiz::class)->constrained()->cascadeOnDelete();
-            $table->string('title');
-            $table->string('option_a');
-            $table->string('option_b');
-            $table->string('option_c');
-            $table->string('option_d');
-            $table->enum('correct_answer',['option_a','option_b','option_c','option_d']);
+            $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
+            $table->text('title'); // The question text, e.g., "Fill in the blank: The cat __ on the mat."
+
+            // --- ADDED FOR SPEC 3.A ---
+            $table->enum('type', ['multiple_choice', 'fill_in_blank', 'matching'])->default('multiple_choice');
+            // --- END ADDED ---
+
+            // Made nullable for other question types
+            $table->string('option_a')->nullable();
+            $table->string('option_b')->nullable();
+            $table->string('option_c')->nullable();
+            $table->string('option_d')->nullable();
+
+            // 'correct_answer' can hold 'a' for multiple_choice, or the exact string for 'fill_in_blank'
+            $table->string('correct_answer')->nullable();
+
+            // --- ADDED FOR SPEC 3.A (Matching) ---
+            // Stores JSON for matching pairs, e.g., {"prompts": ["cat", "dog"], "answers": ["meow", "woof"]}
+            $table->json('options')->nullable();
+            // --- END ADDED ---
+
             $table->timestamps();
         });
     }

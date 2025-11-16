@@ -15,12 +15,23 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->string('image');
-            $table->string('video_url');
-            $table->string('price');
-            $table->string('duration');
-            $table->string('enrollments');
-            $table->foreignIdFor(\App\Models\User::class)->constrained();
+
+            // --- ADDED FOR SPEC 2.A ---
+            $table->enum('skill_level', ['beginner', 'intermediate', 'advanced'])->default('beginner');
+            $table->string('category')->nullable(); // E.g., 'grammar', 'vocabulary', 'speaking'
+            // --- END ADDED ---
+
+            $table->string('image')->nullable();
+            $table->string('video_url')->nullable();
+
+            // --- ADDED FOR SPEC 2.B ---
+            $table->string('audio_url')->nullable();
+            // --- END ADDED ---
+
+            $table->integer('price')->nullable();
+            $table->string('duration')->nullable();
+            $table->integer('enrollments')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Teacher/Creator
             $table->timestamps();
         });
     }

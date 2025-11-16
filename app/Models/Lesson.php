@@ -9,7 +9,19 @@ class Lesson extends Model
 {
     /** @use HasFactory<\Database\Factories\LessonFactory> */
     use HasFactory;
-    protected $guarded = [];
+     protected $fillable = [
+        'title',
+        'description',
+        'skill_level',
+        'category',
+        'image',
+        'video_url',
+        'audio_url',
+        'price',
+        'duration',
+        'enrollments',
+        'user_id',
+    ];
     public function quiz(){
         return $this->hasOne(Quiz::class);
     }

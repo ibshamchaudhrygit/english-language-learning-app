@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        // Spec 5.C: Certificates
+        Schema::create('certificates', function (Blueprint $table) {
             $table->id();
-            $table->string('title'); // Title of the thread
-            $table->text('body');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            // --- ADDED FOR SPEC 6.B (Forum Threads) ---
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('messages')->onDelete('cascade');
-            // --- END ADDED ---
-
+            $table->foreignId('lesson_id')->constrained()->onDelete('cascade'); // Or course_id if you add courses
+            $table->string('title'); // e.g., "Certificate of Completion: Advanced Grammar"
+            $table->string('certificate_hash')->unique(); // For verification
+            $table->timestamp('issued_at');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('certificates');
     }
 };

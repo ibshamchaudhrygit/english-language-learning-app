@@ -1,41 +1,53 @@
 <x-layout>
-    <x-slot:heading>Lessons</x-slot:heading>
-    @auth
-    <p class="text-gray-300 mb-6">{{!empty($lessons) ? "Select a lesson to start" : "No lesson available"}}</p>
-    @endauth
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">All Lessons</h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        @guest
-            <p>Please Login to watch the Lessons.</p>
-        @endguest
-    @auth
-        @foreach($lessons as $lesson)
-            <a href="/lessons/{{ $lesson->id }}"
-               class="group relative bg-gray-900 rounded-2xl shadow-lg overflow-hidden transform transition duration-300 hover:-translate-y-2 hover:scale-[1.03] hover:shadow-2xl">
+        <!-- TODO: Add Filtering UI here based on skill_level and category -->
+        <!-- 
+        <div class="mb-6 flex space-x-4">
+            <select class="border rounded-lg p-2">
+                <option value="">All Skills</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            <select class="border rounded-lg p-2">
+                <option value="">All Categories</option>
+                <option value="grammar">Grammar</option>
+                <option value="vocabulary">Vocabulary</option>
+                <option value="speaking">Speaking</option>
+            </select>
+        </div>
+        -->
 
-                <!-- Glow effect -->
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-2xl transition duration-300"></div>
-
-                <div class="p-6 relative z-10">
-                    <h2 class="text-xl font-semibold text-white mb-3 group-hover:text-blue-300 transition">
-                        {{ $lesson->title }}
-                    </h2>
-                    <p class="text-gray-400 text-sm mb-4 line-clamp-3">{{ $lesson->description }}</p>
-
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <span class="bg-blue-700/30 text-blue-300 px-3 py-1 rounded-full">
-                            {{ $lesson->price }}
-                        </span>
-                        <span class="bg-green-700/30 text-green-300 px-3 py-1 rounded-full">
-                            {{ $lesson->duration }}
-                        </span>
-                        <span class="bg-yellow-700/30 text-yellow-300 px-3 py-1 rounded-full">
-                            {{ $lesson->enrollments }} Enrolled
-                        </span>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($lessons as $lesson)
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                    <img src="{{ $lesson->image ?? 'https://placehold.co/600x400/E2E8F0/AAAAAA?text=Lesson' }}" alt="{{ $lesson->title }}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">{{ $lesson->category ?? 'General' }}</span>
+                            <span class="text-sm font-semibold 
+                                @switch($lesson->skill_level)
+                                    @case('beginner') bg-green-100 text-green-700 @break
+                                    @case('intermediate') bg-yellow-100 text-yellow-700 @break
+                                    @case('advanced') bg-red-100 text-red-700 @break
+                                @endswitch
+                                px-3 py-1 rounded-full">{{ ucfirst($lesson->skill_level) }}</span>
+                        </div>
+                        
+                        <h2 class="text-xl font-bold mb-2">{{ $lesson->title }}</h2>
+                        <p class="text-gray-700 mb-4 h-20">{{ Str::limit($lesson->description, 100) }}</p>
+                        <div class="flex justify-between items-center text-sm text-gray-600 mb-4">
+                            <span><i class="far fa-clock mr-1"></i> {{ $lesson->duration ?? 'N/A' }}</span>
+                            <span><i class="fas fa-users mr-1"></i> {{ $lesson->enrollments ?? 0 }} Students</span>
+                        </div>
+                        <x-button href="/lessons/{{ $lesson->id }}">Start Lesson</x-button>
                     </div>
                 </div>
-            </a>
-        @endforeach
-        @endauth
+            @empty
+                <p class="text-gray-700 col-span-3 text-center">No lessons are available at this time.</p>
+            @endforelse
+        </div>
     </div>
 </x-layout>

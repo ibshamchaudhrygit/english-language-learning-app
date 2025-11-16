@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('role', ['admin', 'user','teacher']);
+            $table->integer('points')->default(0);
+            $table->integer('streak')->default(0); // Tracks consecutive days of activity
+            $table->rememberToken();
             $table->timestamps();
         });
     }

@@ -26,6 +26,25 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class);
     }
+        // --- ADDED FOR SPEC 4 & 5 ---
+
+    /**
+     * Get the badges earned by the user.
+     */
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')->withTimestamps();
+    }
+
+    /**
+     * Get the certificates earned by the user.
+     */
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+    
+    // --- END ADDED ---
 
     protected function casts(): array
     {
