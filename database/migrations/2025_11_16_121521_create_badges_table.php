@@ -1,8 +1,11 @@
 <?php
 
+// --- THIS IS THE FIX ---
+// Corrected the "use" statements from single colon ":" to backslash "\"
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+// --- END FIX ---
 
 return new class extends Migration
 {
@@ -25,8 +28,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('badge_id')->constrained()->onDelete('cascade');
-            $table->timestamp('earned_at');
             
+            // This creates both `created_at` and `updated_at` columns
+            $table->timestamps(); 
+
             $table->unique(['user_id', 'badge_id']); // User can only earn each badge once
         });
     }

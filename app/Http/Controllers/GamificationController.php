@@ -14,9 +14,9 @@ class GamificationController extends Controller
     public function leaderboard()
     {
         $topUsers = User::where('role', 'user')
-                        ->orderBy('points', 'desc')
-                        ->take(10)
-                        ->get();
+                            ->orderBy('points', 'desc')
+                            ->take(10)
+                            ->get();
 
         return view('gamification.leaderboard', [
             'users' => $topUsers

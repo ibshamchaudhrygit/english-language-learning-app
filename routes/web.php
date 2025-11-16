@@ -14,6 +14,12 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LiveSessionController;
+use App\Http\Controllers\WritingController;
+// --- ADDED ---
+use App\Http\Controllers\AdminWritingPromptController;
+use App\Http\Controllers\AdminSpeakingPhraseController;
+// --- END ADDED ---
 
 Route::get('/', function () {
     return view('index');
@@ -44,6 +50,7 @@ Route::get('/lessons', function () {
 
 // --- GAMIFICATION & CERTIFICATES (Public) ---
 Route::get('/leaderboard', [GamificationController::class, 'leaderboard']);
+Route::get('/sessions', [LiveSessionController::class, 'index'])->middleware('auth');
 
 
 Route::get("/messages",function(){
@@ -64,10 +71,10 @@ Route::get("/messages/create",function(){
 
 Route::post("/messages/create",function(){
   Message::create([
-      "title" => request('title'),
-      "body" => request('body'),
-      "user_id" => Auth::user()->id,
-      "parent_id" => null // Explicitly null for a new thread
+     "title" => request('title'),
+     "body" => request('body'),
+     "user_id" => Auth::user()->id,
+     "parent_id" => null // Explicitly null for a new thread
   ]);
   return redirect('/messages');
 });
@@ -146,6 +153,9 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/certificates', [CertificateController::class, 'index']);
     Route::get('/certificates/{certificate}', [CertificateController::class, 'show']);
     Route::get('/my-badges', [GamificationController::class, 'badges']);
+
+    // Writing Practice
+    Route::get('/writing', [WritingController::class, 'index']);
 });
 
 
@@ -257,6 +267,18 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
         return redirect("/teacher/quiz");
     });
 
+    // --- ADDED: Coming Soon Routes for Teacher ---
+    Route::get('/teacher/progress', function () {
+        // TODO: Create a controller and view for this
+        return view('instructor.progress');
+    })->name('teacher.progress');
+
+    Route::get('/teacher/analytics', function () {
+        // TODO: Create a controller and view for this
+        return view('instructor.analytics');
+    })->name('teacher.analytics');
+    // --- END ADDED ---
+
 });
 
 // Admin Routes
@@ -335,5 +357,28 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // --- TODO: Add routes for Admin to manage Badges ---
     // e.g., Route::get('/admin/badges', [BadgeController::class, 'index']);
+
+    // --- ADDED: Coming Soon Routes for Admin ---
+    Route::get('/admin/users', function () {
+        // TODO: Create a controller and view for this
+        return view('admin.users.index');
+    })->name('admin.users');
+
+    Route::get('/admin/analytics', function () {
+        // TODO: Create a controller and view for this
+        return view('admin.analytics.index');
+    })->name('admin.analytics');
+    // --- END ADDED ---
+
+    // Admin routes for Writing Prompts
+    Route::resource('/admin/prompts', AdminWritingPromptController::class)->except([
+        'show' // We don't have a 'show' method in the controller
+    ]);
+
+    // Admin routes for Speaking Phrases
+    Route::resource('/admin/phrases', AdminSpeakingPhraseController::class)->except([
+        'show' // We don't have a 'show' method in the controller
+    ]);
+    // --- END ADDED ---
 
 });

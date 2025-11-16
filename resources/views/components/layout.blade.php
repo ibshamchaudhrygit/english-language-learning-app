@@ -163,7 +163,12 @@
     <!-- Page Content -->
     <main class="min-h-screen">
         <!-- UPDATED: Removed bg-gray-100, content will sit on bg-gray-900 -->
+        
+        <!-- *** THIS IS THE FIX *** -->
+        <!-- Reverted back to {{ $slot }} -->
         {{ $slot }}
+        <!-- *** END FIX *** -->
+
     </main>
 
     <!-- UPDATED: Footer for dark mode -->

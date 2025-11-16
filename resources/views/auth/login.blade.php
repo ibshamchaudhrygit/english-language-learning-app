@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout> {{-- UPDATED: Correct layout component --}}
     <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <span class="mx-auto text-4xl font-bold text-indigo-500 flex justify-center">EngageLearn</span>
@@ -7,24 +7,24 @@
             </h2>
         </div>
 
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {{-- UPDATED: Added a dark mode "card" container like on your other pages --}}
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-gray-800 p-8 rounded-lg shadow-lg">
             <form class="space-y-6" action="/login" method="POST">
                 @csrf
 
                 <x-form-field>
-                    <x-form-label for="email">Email address</x-form-label>
-                    <x-form-input type="email" name="email" id="email" autocomplete="email" required />
+                    <x-form-label for="email" class="text-gray-300">Email address</x-form-label> {{-- UPDATED: Dark mode text --}}
+                    {{-- UPDATED: Added dark mode classes to input --}}
+                    <x-form-input type="email" name="email" id="email" autocomplete="email" required class="bg-gray-700 text-white border-gray-600 focus:ring-indigo-500"/>
                     <x-form-error name="email" />
                 </x-form-field>
 
                 <x-form-field>
                     <div class="flex items-center justify-between">
-                        <x-form-label for="password">Password</x-form-label>
-                        <!-- <div class="text-sm">
-                            <a href="#" class="font-semibold text-indigo-400 hover:text-indigo-300">Forgot password?</a>
-                        </div> -->
+                        <x-form-label for="password" class="text-gray-300">Password</x-form-label> {{-- UPDATED: Dark mode text --}}
                     </div>
-                    <x-form-input type="password" name="password" id="password" autocomplete="current-password" required />
+                    {{-- UPDATED: Added dark mode classes to input --}}
+                    <x-form-input type="password" name="password" id="password" autocomplete="current-password" required class="bg-gray-700 text-white border-gray-600 focus:ring-indigo-500"/>
                     <x-form-error name="password" />
                 </x-form-field>
 
@@ -41,4 +41,4 @@
             </p>
         </div>
     </div>
-</x-layout>
+</x-layout> {{-- UPDATED: Correct layout component --}}
